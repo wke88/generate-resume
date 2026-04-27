@@ -1,8 +1,8 @@
 {
-  "name": "generate-resume",
+  "name": "awsome-resume",
   "private": true,
   "version": "1.0.0",
-  "description": "A professional resume generator with multiple templates",
+  "description": "简历神器 - AI 驱动的岗位定向简历工具",
   "type": "module",
   "scripts": {
     "dev": "vite",

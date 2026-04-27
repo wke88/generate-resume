@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { Download, Upload, RotateCcw, FileJson, Printer, ChevronDown } from 'lucide-react';
+import { Download, Upload, RotateCcw, FileJson, Printer, ChevronDown, Sparkles } from 'lucide-react';
 import { useResumeStore } from '../store/resumeStore';
+import { useAIStore } from '../store/aiStore';
 import { exportToPDF, exportToJSON, importFromJSON } from '../utils/export';
 
 export const TopBar: React.FC = () => {
   const { data, settings, importData, resetToDefault } = useResumeStore();
+  const { setAssistantOpen, isReady } = useAIStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -48,12 +50,35 @@ export const TopBar: React.FC = () => {
     <header className="h-14 flex-shrink-0 bg-white border-b border-gray-200 flex items-center px-5 justify-between z-10">
       {/* Logo */}
       <div className="flex items-center gap-2.5">
-        <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-          <span className="text-white font-bold text-sm">R</span>
-        </div>
+        <svg
+          viewBox="0 0 32 32"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-7 h-7 flex-shrink-0"
+          aria-label="简历神器 Logo"
+        >
+          <defs>
+            <linearGradient id="logo-g" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stopColor="#8B5CF6" />
+              <stop offset="100%" stopColor="#2563EB" />
+            </linearGradient>
+          </defs>
+          <rect width="32" height="32" rx="8" fill="url(#logo-g)" />
+          <path
+            d="M9 8.5h10l3 3V22a1.5 1.5 0 0 1-1.5 1.5H9A1.5 1.5 0 0 1 7.5 22V10A1.5 1.5 0 0 1 9 8.5Z"
+            fill="#ffffff"
+            opacity="0.95"
+          />
+          <rect x="10" y="13" width="8" height="1.4" rx="0.7" fill="#8B5CF6" opacity="0.85" />
+          <rect x="10" y="16" width="10" height="1.4" rx="0.7" fill="#8B5CF6" opacity="0.55" />
+          <rect x="10" y="19" width="7" height="1.4" rx="0.7" fill="#8B5CF6" opacity="0.55" />
+          <g transform="translate(22 6)">
+            <path d="M3 0L3.7 2.3L6 3L3.7 3.7L3 6L2.3 3.7L0 3L2.3 2.3Z" fill="#FBBF24" />
+          </g>
+        </svg>
         <div>
-          <span className="text-sm font-semibold text-gray-900">简历生成器</span>
-          <span className="ml-2 text-xs text-gray-400 hidden sm:inline">Resume Builder</span>
+          <span className="text-sm font-semibold text-gray-900">简历神器</span>
+          <span className="ml-2 text-xs text-gray-400 hidden sm:inline">Awsome Resume</span>
         </div>
       </div>
 
@@ -67,6 +92,22 @@ export const TopBar: React.FC = () => {
 
       {/* Actions */}
       <div className="flex items-center gap-2">
+        {/* AI 助手按钮：整个项目的差异化入口 */}
+        <button
+          onClick={() => setAssistantOpen(true)}
+          className="relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-700 bg-gradient-to-r from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 border border-purple-200 rounded-lg transition-all"
+          title="AI 助手：粘贴 JD 生成匹配度与改写建议"
+        >
+          <Sparkles size={13} className="text-purple-600" />
+          <span>AI 助手</span>
+          {!isReady() && (
+            <span
+              className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full animate-pulse"
+              title="尚未配置"
+            />
+          )}
+        </button>
+
         {/* Import JSON */}
         <input ref={fileInputRef} type="file" accept=".json" onChange={handleJSONImport} className="hidden" />
         <button

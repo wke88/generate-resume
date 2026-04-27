@@ -136,6 +136,20 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data, settings }) => 
     >
       {/* Ultra-minimal header */}
       <div style={{ marginBottom: '32px' }}>
+        {settings.showAvatar && personal.avatar && (
+          <img
+            src={personal.avatar}
+            alt={personal.name}
+            style={{
+              width: '72px',
+              height: '72px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              marginBottom: '14px',
+              display: 'block',
+            }}
+          />
+        )}
         <h1 style={{ fontSize: fs(32), fontWeight: '300', margin: '0 0 4px 0', letterSpacing: '-1px', color: colorTheme.primary }}>
           {personal.name || '您的姓名'}
         </h1>

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { useResumeStore } from '../../store/resumeStore';
+import { AIFieldButton } from '../ai/AIFieldButton';
+import { useAIStore } from '../../store/aiStore';
 
 export const ProjectsForm: React.FC = () => {
   const { data, addProject, updateProject, deleteProject } = useResumeStore();
   const [expanded, setExpanded] = useState<string | null>(data.projects[0]?.id || null);
   const [techInputs, setTechInputs] = useState<Record<string, string>>({});
+  const jd = useAIStore((s) => s.jd);
 
   const handleAddTech = (id: string) => {
     const val = techInputs[id]?.trim();
@@ -48,7 +51,15 @@ export const ProjectsForm: React.FC = () => {
               </div>
               <Field label="项目链接（可选）" value={proj.link} onChange={(v) => updateProject(proj.id, { link: v })} placeholder="https://github.com/..." />
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">项目描述</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-gray-600">项目描述</label>
+                  <AIFieldButton
+                    value={proj.description}
+                    onApply={(next) => updateProject(proj.id, { description: next })}
+                    context={{ role: proj.role, jd }}
+                    modes={['polish', 'quantify', 'star', 'shorten', 'expand', 'translate_en']}
+                  />
+                </div>
                 <textarea
                   value={proj.description}
                   onChange={(e) => updateProject(proj.id, { description: e.target.value })}

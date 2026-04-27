@@ -176,6 +176,22 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data, settings }) => 
     >
       {/* Header */}
       <header style={{ textAlign: 'center', marginBottom: '24px' }}>
+        {settings.showAvatar && personal.avatar && (
+          <img
+            src={personal.avatar}
+            alt={personal.name}
+            style={{
+              width: '88px',
+              height: '88px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: `1px solid ${colorTheme.primary}`,
+              padding: '3px',
+              margin: '0 auto 12px',
+              display: 'block',
+            }}
+          />
+        )}
         <h1
           style={{
             margin: 0,

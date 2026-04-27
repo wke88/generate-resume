@@ -175,13 +175,28 @@ export const CompactTemplate: React.FC<TemplateProps> = ({ data, settings }) => 
           borderBottom: `3px solid ${colorTheme.primary}`,
         }}
       >
-        <div>
-          <h1 style={{ margin: 0, fontSize: fs(22), fontWeight: 700, color: colorTheme.primary }}>
-            {personal.name || '您的姓名'}
-          </h1>
-          {personal.title && (
-            <p style={{ margin: '2px 0 0 0', fontSize: fs(12), color: '#64748b' }}>{personal.title}</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {settings.showAvatar && personal.avatar && (
+            <img
+              src={personal.avatar}
+              alt={personal.name}
+              style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                border: `2px solid ${colorTheme.primary}`,
+              }}
+            />
           )}
+          <div>
+            <h1 style={{ margin: 0, fontSize: fs(22), fontWeight: 700, color: colorTheme.primary }}>
+              {personal.name || '您的姓名'}
+            </h1>
+            {personal.title && (
+              <p style={{ margin: '2px 0 0 0', fontSize: fs(12), color: '#64748b' }}>{personal.title}</p>
+            )}
+          </div>
         </div>
         <div style={{ textAlign: 'right', fontSize: fs(10), color: '#475569', lineHeight: 1.6 }}>
           {personal.email && <div>{personal.email}</div>}

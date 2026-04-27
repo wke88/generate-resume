@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useResumeStore } from '../../store/resumeStore';
+import { AIFieldButton } from '../ai/AIFieldButton';
+import { useAIStore } from '../../store/aiStore';
 
 export const WorkExperienceForm: React.FC = () => {
   const { data, addWorkExperience, updateWorkExperience, deleteWorkExperience } = useResumeStore();
   const [expanded, setExpanded] = useState<string | null>(data.workExperience[0]?.id || null);
+  const jd = useAIStore((s) => s.jd);
 
   const handleAchievements = (id: string, value: string) => {
     const achievements = value.split('\n').filter((line) => line.trim());
@@ -61,7 +64,15 @@ export const WorkExperienceForm: React.FC = () => {
                 <span className="text-xs text-gray-600">目前在职</span>
               </label>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">工作描述</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-gray-600">工作描述</label>
+                  <AIFieldButton
+                    value={exp.description}
+                    onApply={(next) => updateWorkExperience(exp.id, { description: next })}
+                    context={{ role: exp.position, jd }}
+                    modes={['polish', 'quantify', 'shorten', 'translate_en']}
+                  />
+                </div>
                 <textarea
                   value={exp.description}
                   onChange={(e) => updateWorkExperience(exp.id, { description: e.target.value })}
@@ -71,9 +82,21 @@ export const WorkExperienceForm: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
-                  工作成就 <span className="text-gray-400 font-normal">（每行一条）</span>
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-medium text-gray-600">
+                    工作成就 <span className="text-gray-400 font-normal">（每行一条）</span>
+                  </label>
+                  <AIFieldButton
+                    value={exp.achievements.join('\n')}
+                    onApply={(next) => {
+                      const arr = next.split('\n').map((s) => s.replace(/^[-•·]\s*/, '').trim()).filter(Boolean);
+                      updateWorkExperience(exp.id, { achievements: arr });
+                    }}
+                    context={{ role: exp.position, jd }}
+                    modes={['star', 'quantify', 'polish', 'expand', 'translate_en']}
+                    label="AI 增强"
+                  />
+                </div>
                 <textarea
                   value={exp.achievements.join('\n')}
                   onChange={(e) => handleAchievements(exp.id, e.target.value)}

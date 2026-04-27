@@ -1,8 +1,8 @@
-# 简历生成器 · Resume Builder
+# 简历神器 · Awsome Resume
 
-一个基于 **React 18 + TypeScript + Vite** 构建的专业简历在线生成网站，支持多模板切换、实时预览、PDF 导出等核心功能，开箱即用，无需后端。
+一款基于 **React 18 + TypeScript + Vite** 构建的 **AI 驱动** 简历工具。不只是简历生成器 —— 支持多模板切换、岗位定向匹配度分析、一键改写 / 量化 / STAR 化、PDF 导出，开箱即用，无需后端。
 
-![预览截图](https://img.shields.io/badge/React-18-61DAFB?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript) ![Vite](https://img.shields.io/badge/Vite-4-646CFF?logo=vite) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript) ![Vite](https://img.shields.io/badge/Vite-4-646CFF?logo=vite) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-06B6D4?logo=tailwindcss) ![AI Powered](https://img.shields.io/badge/AI-Powered-8B5CF6)
 
 ---
 

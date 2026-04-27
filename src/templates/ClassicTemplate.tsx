@@ -147,6 +147,21 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data, settings }) => 
     >
       {/* Header - Classic centered style */}
       <div style={{ textAlign: 'center', borderBottom: `3px solid ${colorTheme.primary}`, paddingBottom: '20px', marginBottom: '24px' }}>
+        {settings.showAvatar && personal.avatar && (
+          <img
+            src={personal.avatar}
+            alt={personal.name}
+            style={{
+              width: '96px',
+              height: '96px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: `3px solid ${colorTheme.primary}`,
+              margin: '0 auto 12px',
+              display: 'block',
+            }}
+          />
+        )}
         <h1 style={{ fontSize: fs(26), fontWeight: '700', margin: '0 0 6px 0', color: colorTheme.primary }}>
           {personal.name || '您的姓名'}
         </h1>
