@@ -1,4 +1,21 @@
-import { ColorTheme, ResumeData, ResumeSettings } from '../types/resume';
+import { ColorTheme, FontFamily, ResumeData, ResumeSettings } from '../types/resume';
+
+export const FONT_FAMILIES: { id: FontFamily; label: string; sample: string; css: string }[] = [
+  { id: 'sans', label: '无衬线', sample: 'Aa 简历', css: "'Inter', system-ui, sans-serif" },
+  { id: 'serif', label: '衬线体', sample: 'Aa 简历', css: "Georgia, 'Times New Roman', serif" },
+  { id: 'mono', label: '等宽体', sample: 'Aa 简历', css: "'JetBrains Mono', Menlo, monospace" },
+  { id: 'inter', label: 'Inter', sample: 'Aa Resume', css: "'Inter', system-ui, sans-serif" },
+  { id: 'georgia', label: 'Georgia', sample: 'Aa Resume', css: "Georgia, serif" },
+  { id: 'system', label: '系统', sample: 'Aa 简历', css: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },
+  { id: 'pingfang', label: '苹方', sample: 'Aa 简历', css: "'PingFang SC', 'Microsoft YaHei', sans-serif" },
+  { id: 'songti', label: '宋体', sample: 'Aa 简历', css: "'Songti SC', SimSun, 'Noto Serif SC', serif" },
+  { id: 'kaiti', label: '楷体', sample: 'Aa 简历', css: "'Kaiti SC', KaiTi, 'STKaiti', serif" },
+];
+
+export const FONT_FAMILY_CSS: Record<FontFamily, string> = FONT_FAMILIES.reduce(
+  (acc, f) => ({ ...acc, [f.id]: f.css }),
+  {} as Record<FontFamily, string>,
+);
 
 export const COLOR_THEMES: ColorTheme[] = [
   {
@@ -53,6 +70,78 @@ export const COLOR_THEMES: ColorTheme[] = [
     secondary: '#b45309',
     accent: '#fef3c7',
     text: '#1c1917',
+    background: '#ffffff',
+  },
+  {
+    id: 'ink',
+    name: '深墨黑',
+    primary: '#111827',
+    secondary: '#1f2937',
+    accent: '#e5e7eb',
+    text: '#0b1220',
+    background: '#ffffff',
+  },
+  {
+    id: 'graphite',
+    name: '石墨灰',
+    primary: '#52525b',
+    secondary: '#3f3f46',
+    accent: '#e4e4e7',
+    text: '#18181b',
+    background: '#ffffff',
+  },
+  {
+    id: 'forest',
+    name: '森林绿',
+    primary: '#166534',
+    secondary: '#14532d',
+    accent: '#dcfce7',
+    text: '#052e16',
+    background: '#ffffff',
+  },
+  {
+    id: 'sky',
+    name: '天空蓝',
+    primary: '#0284c7',
+    secondary: '#0369a1',
+    accent: '#e0f2fe',
+    text: '#082f49',
+    background: '#ffffff',
+  },
+  {
+    id: 'coral',
+    name: '珊瑚橙',
+    primary: '#ea580c',
+    secondary: '#c2410c',
+    accent: '#ffedd5',
+    text: '#431407',
+    background: '#ffffff',
+  },
+  {
+    id: 'sakura',
+    name: '樱花粉',
+    primary: '#db2777',
+    secondary: '#be185d',
+    accent: '#fce7f3',
+    text: '#500724',
+    background: '#ffffff',
+  },
+  {
+    id: 'indigo',
+    name: '靛青',
+    primary: '#4338ca',
+    secondary: '#3730a3',
+    accent: '#e0e7ff',
+    text: '#1e1b4b',
+    background: '#ffffff',
+  },
+  {
+    id: 'wine',
+    name: '酒红',
+    primary: '#9f1239',
+    secondary: '#881337',
+    accent: '#ffe4e6',
+    text: '#450a0a',
     background: '#ffffff',
   },
 ];
@@ -161,7 +250,7 @@ export const DEFAULT_RESUME_DATA: ResumeData = {
 export const DEFAULT_SETTINGS: ResumeSettings = {
   templateId: 'modern',
   colorTheme: COLOR_THEMES[0],
-  fontSize: 'medium',
+  fontSize: 12,
   fontFamily: 'sans',
   showAvatar: false,
   pageFormat: 'A4',
@@ -172,5 +261,20 @@ export const DEFAULT_SETTINGS: ResumeSettings = {
     'projects',
     'certificates',
     'languages',
+    'customSections',
   ],
+  hiddenSections: [],
+  sectionTitles: {},
+};
+
+/** 各模块的默认标题（中文） */
+export const DEFAULT_SECTION_TITLES: Record<string, string> = {
+  personal: '基本信息',
+  workExperience: '工作经历',
+  education: '教育经历',
+  skills: '专业技能',
+  projects: '项目经历',
+  certificates: '证书荣誉',
+  languages: '语言能力',
+  customSections: '自定义模块',
 };

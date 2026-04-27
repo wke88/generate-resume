@@ -81,7 +81,25 @@ export interface ResumeData {
   customSections: CustomSection[];
 }
 
-export type TemplateId = 'modern' | 'classic' | 'minimal' | 'creative' | 'tech';
+export type TemplateId =
+  | 'modern'
+  | 'classic'
+  | 'minimal'
+  | 'creative'
+  | 'tech'
+  | 'elegant'
+  | 'compact';
+
+export type FontFamily =
+  | 'sans'
+  | 'serif'
+  | 'mono'
+  | 'inter'
+  | 'georgia'
+  | 'system'
+  | 'pingfang'
+  | 'songti'
+  | 'kaiti';
 
 export type ColorTheme = {
   id: string;
@@ -96,11 +114,28 @@ export type ColorTheme = {
 export interface ResumeSettings {
   templateId: TemplateId;
   colorTheme: ColorTheme;
-  fontSize: 'small' | 'medium' | 'large';
-  fontFamily: 'sans' | 'serif' | 'mono';
+  /** 基准字号，单位 px。默认 12，范围 10~18，步进 0.5。模板内部按比例缩放 */
+  fontSize: number;
+  fontFamily: FontFamily;
   showAvatar: boolean;
   pageFormat: 'A4' | 'Letter';
   sectionOrder: string[];
+  /** 被隐藏的模块 key 列表（不参与渲染，但仍然保留在 sectionOrder 中保持位置） */
+  hiddenSections: string[];
+  /** 自定义栏目标题：key -> 用户自定义的显示名 */
+  sectionTitles: Record<string, string>;
+}
+
+/** 自定义模板预设：一份完整的外观配置快照 */
+export interface CustomPreset {
+  id: string;
+  name: string;
+  createdAt: number;
+  settings: Omit<ResumeSettings, 'sectionOrder' | 'hiddenSections' | 'sectionTitles'> & {
+    sectionOrder: string[];
+    hiddenSections: string[];
+    sectionTitles: Record<string, string>;
+  };
 }
 
 export type SectionKey =

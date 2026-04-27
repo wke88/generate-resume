@@ -5,11 +5,11 @@ import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 export const PreviewPanel: React.FC = () => {
   const { data, settings } = useResumeStore();
-  const [zoom, setZoom] = useState(0.6);
+  const [zoom, setZoom] = useState(1);
 
-  const handleZoomIn = () => setZoom((z) => Math.min(z + 0.1, 1.2));
+  const handleZoomIn = () => setZoom((z) => Math.min(z + 0.1, 2));
   const handleZoomOut = () => setZoom((z) => Math.max(z - 0.1, 0.3));
-  const handleZoomReset = () => setZoom(0.6);
+  const handleZoomReset = () => setZoom(1);
 
   return (
     <div className="flex flex-col h-full bg-gray-100">

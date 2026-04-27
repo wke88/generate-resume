@@ -12,6 +12,7 @@ import {
   CustomSection,
   ColorTheme,
   TemplateId,
+  CustomPreset,
 } from '../types/resume';
 import { DEFAULT_RESUME_DATA, DEFAULT_SETTINGS } from '../data/defaults';
 
@@ -44,9 +45,19 @@ interface ResumeStore {
   deleteCustomSection: (id: string) => void;
   setTemplate: (templateId: TemplateId) => void;
   setColorTheme: (theme: ColorTheme) => void;
-  setFontSize: (size: ResumeSettings['fontSize']) => void;
+  setFontSize: (size: number) => void;
   setFontFamily: (family: ResumeSettings['fontFamily']) => void;
   toggleShowAvatar: () => void;
+  reorderSections: (sectionOrder: string[]) => void;
+  toggleSectionVisible: (key: string) => void;
+  renameSectionTitle: (key: string, title: string) => void;
+  // 自定义预设
+  presets: CustomPreset[];
+  savePreset: (name: string) => void;
+  applyPreset: (id: string) => void;
+  deletePreset: (id: string) => void;
+  exportPresets: () => string;
+  importPresets: (json: string) => { success: boolean; message: string };
   importData: (data: ResumeData) => void;
   resetToDefault: () => void;
 }
@@ -55,9 +66,10 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export const useResumeStore = create<ResumeStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       data: DEFAULT_RESUME_DATA,
       settings: DEFAULT_SETTINGS,
+      presets: [],
       activeSection: 'personal',
 
       setActiveSection: (section) => set({ activeSection: section }),
@@ -322,6 +334,103 @@ export const useResumeStore = create<ResumeStore>()(
           settings: { ...state.settings, showAvatar: !state.settings.showAvatar },
         })),
 
+      reorderSections: (sectionOrder) =>
+        set((state) => ({
+          settings: { ...state.settings, sectionOrder },
+        })),
+
+      toggleSectionVisible: (key) =>
+        set((state) => {
+          const hidden = state.settings.hiddenSections || [];
+          const next = hidden.includes(key)
+            ? hidden.filter((k) => k !== key)
+            : [...hidden, key];
+          return { settings: { ...state.settings, hiddenSections: next } };
+        }),
+
+      renameSectionTitle: (key, title) =>
+        set((state) => {
+          const titles = { ...(state.settings.sectionTitles || {}) };
+          if (title.trim()) titles[key] = title.trim();
+          else delete titles[key];
+          return { settings: { ...state.settings, sectionTitles: titles } };
+        }),
+
+      savePreset: (name) =>
+        set((state) => {
+          const preset: CustomPreset = {
+            id: generateId(),
+            name: name.trim() || `自定义预设 ${(state.presets?.length || 0) + 1}`,
+            createdAt: Date.now(),
+            settings: {
+              templateId: state.settings.templateId,
+              colorTheme: state.settings.colorTheme,
+              fontSize: state.settings.fontSize,
+              fontFamily: state.settings.fontFamily,
+              showAvatar: state.settings.showAvatar,
+              pageFormat: state.settings.pageFormat,
+              sectionOrder: [...(state.settings.sectionOrder || [])],
+              hiddenSections: [...(state.settings.hiddenSections || [])],
+              sectionTitles: { ...(state.settings.sectionTitles || {}) },
+            },
+          };
+          return { presets: [...(state.presets || []), preset] };
+        }),
+
+      applyPreset: (id) =>
+        set((state) => {
+          const preset = (state.presets || []).find((p) => p.id === id);
+          if (!preset) return {} as any;
+          return {
+            settings: {
+              ...state.settings,
+              ...preset.settings,
+              sectionOrder: [...preset.settings.sectionOrder],
+              hiddenSections: [...preset.settings.hiddenSections],
+              sectionTitles: { ...preset.settings.sectionTitles },
+            },
+          };
+        }),
+
+      deletePreset: (id) =>
+        set((state) => ({
+          presets: (state.presets || []).filter((p) => p.id !== id),
+        })),
+
+      exportPresets: () => {
+        const { presets } = get();
+        return JSON.stringify({ version: 1, presets: presets || [] }, null, 2);
+      },
+
+      importPresets: (json) => {
+        try {
+          const parsed = JSON.parse(json);
+          const list = Array.isArray(parsed) ? parsed : parsed?.presets;
+          if (!Array.isArray(list)) {
+            return { success: false, message: 'JSON 格式不正确：缺少 presets 数组' };
+          }
+          // 简单校验
+          const valid: CustomPreset[] = [];
+          for (const item of list) {
+            if (item && item.settings && item.settings.templateId && item.settings.colorTheme) {
+              valid.push({
+                id: item.id || generateId(),
+                name: item.name || '未命名预设',
+                createdAt: item.createdAt || Date.now(),
+                settings: item.settings,
+              });
+            }
+          }
+          if (valid.length === 0) {
+            return { success: false, message: '没有有效的预设可导入' };
+          }
+          set((state) => ({ presets: [...(state.presets || []), ...valid] }));
+          return { success: true, message: `成功导入 ${valid.length} 个预设` };
+        } catch (e) {
+          return { success: false, message: 'JSON 解析失败，请检查格式' };
+        }
+      },
+
       importData: (data) => set({ data }),
 
       resetToDefault: () =>
@@ -329,6 +438,21 @@ export const useResumeStore = create<ResumeStore>()(
     }),
     {
       name: 'resume-storage',
+      // 兼容旧版：fontSize 从字符串枚举迁移为数字
+      migrate: (persistedState: any) => {
+        if (!persistedState) return persistedState;
+        const s = persistedState.settings || {};
+        if (typeof s.fontSize === 'string') {
+          const map: Record<string, number> = { small: 11, medium: 12, large: 13 };
+          s.fontSize = map[s.fontSize] ?? 12;
+        }
+        if (!Array.isArray(s.hiddenSections)) s.hiddenSections = [];
+        if (!s.sectionTitles || typeof s.sectionTitles !== 'object') s.sectionTitles = {};
+        persistedState.settings = s;
+        if (!Array.isArray(persistedState.presets)) persistedState.presets = [];
+        return persistedState;
+      },
+      version: 2,
     }
   )
 );
